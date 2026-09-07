@@ -1,0 +1,18 @@
+{
+  "circles": {
+    "gourmandise": "An abandoned banquet hall in the underworld, monumental empty plates, drifting amber smoke, slow atmospheric motion.",
+    "colere": "A basalt fortress above molten lava, scarlet sparks and distant volcanic eruptions, slow atmospheric motion.",
+    "avarice": "An infernal treasury, tarnished gold coins dissolving into ash, dim golden light, slow atmospheric motion.",
+    "paresse": "An ancient frozen crypt, heavy violet mist and motionless pendulums, extremely slow atmospheric motion.",
+    "luxure": "An enchanted crimson palace, velvet curtains, floating rose petals and spectral lanterns, no people, slow atmospheric motion.",
+    "envie": "An emerald mirror labyrinth, fractured reflections of empty towers, drifting green mist, slow atmospheric motion.",
+    "orgueil": "A colossal obsidian throne room, impossible shifting architecture and pale celestial light, slow atmospheric motion."
+  },
+  "tarots": {
+    "la-tour": "The Tower tarot archetype: an isolated stone tower struck by lightning, falling masonry, dramatic composition.",
+    "le-diable": "The Devil tarot archetype: a symbolic horned guardian above a sealed infernal gate, dark regal silhouette, no gore.",
+    "la-mort": "Death tarot archetype: a cloaked skeletal figure holding a scythe among pale flowers, solemn symbolic composition, no gore."
+  },
+  "videoStyle": "Dark fantasy game background, painterly cinematic lighting, fixed wide camera, unobstructed central play area, no text, no logos, no UI, five second atmospheric shot.",
+  "tarotStyle": "Gothic engraved tarot illustration, black ink and ember gold on dark parchment, portrait composition, consistent ornate border, no letters, no numerals, no logos."
+}

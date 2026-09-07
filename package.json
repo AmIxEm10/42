@@ -3,19 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Tower Defense web-natif : défendez la Porte des Enfers.",
-  "engines": { "node": ">=22.12.0" },
+  "description": "Tower Defense web-natif : d\u00e9fendez la Porte des Enfers.",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "typecheck": "tsc --noEmit",
+    "dev": "vite",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.server.json",
     "build": "npm run typecheck && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "setup:env": "node scripts/setup-env.mjs"
+    "setup:env": "node scripts/setup-env.mjs",
+    "media:serve": "node --env-file=.env --import tsx server/index.ts",
+    "test": "node --import tsx --test tests/*.test.ts"
   },
-  "dependencies": { "phaser": "^3.90.0" },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.0",
+    "@types/node": "^22.20.1",
     "tailwindcss": "^4.1.0",
+    "tsx": "^4.23.13",
     "typescript": "~5.9.3",
     "vite": "^7.0.0"
   }

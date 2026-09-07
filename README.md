@@ -2,11 +2,11 @@
 
 Tower Defense web-natif en TypeScript / Phaser 3. Le joueur défendra la Porte des Enfers à travers les sept péchés, avec des tours et des cartes de Tarot.
 
-## État actuel — étape 1
+## État actuel — étape 2
 
 Socle Vite + TypeScript strict + Phaser 3 + Tailwind CSS. Les scènes Boot → Preloader → MainMenu démarrent le moteur et affichent un menu DOM superposé au canvas. Game et MetaProgression sont enregistrées comme squelettes. Le bouton de jeu est volontairement désactivé : aucune boucle de combat n'est encore implémentée.
 
-Le projet est hébergé dans le dépôt public [AmIxEm10/42](https://github.com/AmIxEm10/42), conformément au choix du propriétaire. Aucune requête Higgsfield n'est exécutée à cette étape.
+Le projet est hébergé dans le dépôt public [AmIxEm10/42](https://github.com/AmIxEm10/42), conformément au choix du propriétaire. Le connecteur Higgsfield et son relais serveur sont implémentés ; leur branchement au gameplay viendra aux prochaines étapes.
 
 ## Démarrage
 
@@ -34,7 +34,10 @@ npm run preview
 | `src/scenes` | Boot, Preloader, MainMenu, Game, MetaProgression |
 | `src/entities` | Futures classes Tower, Enemy, Projectile, Gate |
 | `src/systems` | Futurs WaveManager, TarotManager, TarotDeck, EconomyManager, Spawner |
-| `src/services` | Futur HiggsfieldAPI.ts, après approbation |
+| `src/services` | HiggsfieldAPI.ts, types média et repli explicite |
+| `src/config` | Prompts JSON des sept cercles et des trois Tarots |
+| `server` | Relais authentifié, fournisseur Higgsfield, cache et budget |
+| `tests` | Tests du connecteur et du relais |
 | `src/ui` | Menu DOM ; futurs HUD, TarotOverlay et StatsDashboard |
 | `src/assets` | Futurs placeholders et médias mis en cache |
 
@@ -42,12 +45,16 @@ npm run preview
 
 `.env` est ignoré par Git. `.env.example` contient uniquement des valeurs vides et l'adresse publique du futur relais média. Ne jamais mettre un secret dans une variable `VITE_*` : Vite les intègre au code livré au navigateur.
 
-L'étape 2 devra ajouter un relais côté serveur, puis le connecteur frontend `HiggsfieldAPI.ts` : navigateur → relais authentifié → Higgsfield. Le relais conservera les identifiants et contrôlera les coûts, les prompts et le cache. Le format d'authentification et les endpoints devront être vérifiés dans la documentation officielle avant implémentation. Les variables privées préparées ici ne sont pas encore consommées.
+Le service utilise un relais Node.js : navigateur → proxy local Vite → relais authentifié → Higgsfield. `npm run setup:env` prépare aussi le jeton interne du relais. Voir [server/README.md](server/README.md) pour renseigner les clés, lancer les deux processus et utiliser le connecteur. Les tests ne lancent aucune génération payante.
 
-## Suite prévue (non implémentée)
+```sh
+npm test
+```
 
-1. Socle technique et commit `feat: setup Vite+Phaser`.
-2. Connecteur Higgsfield et requêtes asynchrones, après approbation.
+## Avancement
+
+1. **Terminé** — socle technique et commit `feat: setup Vite+Phaser`.
+2. **Terminé côté code** — connecteur Higgsfield, relais et tests simulés ; validation réelle en attente de clés API.
 3. WaveManager configurable en JSON, chemin et Enemy.
 4. Placement Tower, Projectile et collisions.
 5. Tirage de trois Tarots et effets La Tour / Le Diable / La Mort.
