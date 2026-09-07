@@ -13,6 +13,11 @@ import { AshDrop } from '../entities/AshDrop';
 import { BoardRenderer } from '../ui/BoardRenderer';
 import { GameControls } from '../ui/GameControls';
 import { MetaStore } from '../state/MetaStore';
+import { TarotDeck } from '../systems/TarotDeck';
+import { TarotManager } from '../systems/TarotManager';
+import { TarotOverlay } from '../ui/TarotOverlay';
+import { HiggsfieldAPI } from '../services/HiggsfieldAPI';
+import { LevelBackground } from '../ui/LevelBackground';
 
 export class Game extends Phaser.Scene {
   grid!: Pathfinder;
@@ -34,6 +39,9 @@ export class Game extends Phaser.Scene {
   private bossClock = 0;
   private uiClock = 0;
   private ended = false;
+  private tarot!: TarotManager;
+  private tarotOverlay!: TarotOverlay;
+  private background!: LevelBackground;
 
   constructor() { super(SceneKeys.Game); }
 
@@ -51,6 +59,16 @@ export class Game extends Phaser.Scene {
     });
     this.board = new BoardRenderer(this, this.grid);
     this.gate = new Gate(this, this.grid.goal, MetaStore.shared.gateLevel * 20);
+    const media = new HiggsfieldAPI();
+    this.background = new LevelBackground(media); this.tarotOverlay = new TarotOverlay(media);
+    this.tarot = new TarotManager(new TarotDeck(MetaStore.shared.arcane), {
+      multiplyDamage: factor => { this.combat.multiplier *= factor; }, curseGate: () => this.gate.curse(),
+      enableExecution: () => { this.combat.execute = true; }, unlockFrost: () => { this.frostUnlocked = true; },
+      addAshes: amount => this.economy.collect(amount), targetAoe: () => {
+        if (this.selected) this.selected.aoe = true;
+        else { this.awaitingAoe = true; this.message('La Tour : cliquez sur une défense ou construisez-en une pour recevoir le pouvoir.'); }
+      },
+    });
     this.scale.refresh(); this.resize();
     this.scale.on('resize', this.resize, this);
     this.input.on('pointerdown', this.pointer, this);
@@ -58,6 +76,7 @@ export class Game extends Phaser.Scene {
     this.input.keyboard?.on('keydown-R', () => this.collectAll());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       this.controls.destroy(); this.scale.off('resize', this.resize, this);
+      this.tarotOverlay.destroy(); this.background.destroy();
       document.querySelector('#app')!.classList.remove('playing'); this.scale.refresh();
     });
     this.beginPreparation(); this.refresh();
@@ -67,7 +86,14 @@ export class Game extends Phaser.Scene {
     this.cameras.main.setZoom(Math.min(this.scale.width / 900, this.scale.height / 520)).centerOn(432, 240);
   }
 
-  beginPreparation(): void { this.message('Placez vos défenses, puis lancez la vague.'); }
+  beginPreparation(): void {
+    this.drawing = true;
+    this.background.setCircle(this.waves.level.id);
+    this.tarotOverlay.show(this.tarot.draw(), id => {
+      this.drawing = false; this.message('Placez vos défenses, puis lancez la vague.');
+      this.tarot.choose(id); this.refresh();
+    });
+  }
   message(text: string): void { this.controls.text('game-message', text); }
 
   private chooseBuild(kind: TowerKind): void {

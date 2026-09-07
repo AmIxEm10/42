@@ -11,6 +11,7 @@ export class HellGateGame extends Phaser.Game {
       type: Phaser.AUTO,
       parent: 'game',
       backgroundColor: '#100d12',
+      transparent: true,
       scale: { mode: Phaser.Scale.RESIZE, width: '100%', height: '100%' },
       physics: { default: 'arcade', arcade: { debug: false } },
       scene: [Boot, Preloader, MainMenu, Game, MetaProgression],
