@@ -15,6 +15,7 @@ export class Enemy extends Phaser.GameObjects.Container {
   private readonly bar: Phaser.GameObjects.Rectangle;
   readonly radius: number;
   alive = true;
+  slowTime = 0;
 
   constructor(scene: Phaser.Scene, readonly level: LevelConfig, private readonly grid: Pathfinder, multiplier: number, readonly boss = false) {
     const position = center(grid.start);
@@ -36,6 +37,8 @@ export class Enemy extends Phaser.GameObjects.Container {
   get occupiedCells(): Cell[] { return this.target ? [this.cell, this.target] : [this.cell]; }
 
   step(delta: number): boolean {
+    this.slowTime = Math.max(0, this.slowTime - delta);
+    const movement = this.speed * delta * (this.slowTime > 0 ? 0.5 : 1);
     if (this.pathVersion !== this.grid.version) {
       this.path = this.grid.find(this.cell);
       this.pathVersion = this.grid.version;
@@ -44,13 +47,13 @@ export class Enemy extends Phaser.GameObjects.Container {
     if (!this.target) return true;
     const dest = center(this.target);
     const distance = Phaser.Math.Distance.Between(this.x, this.y, dest.x, dest.y);
-    if (distance <= this.speed * delta) {
+    if (distance <= movement) {
       this.setPosition(dest.x, dest.y);
       this.target = this.path.shift();
       return !this.target;
     }
-    this.x += (dest.x - this.x) / distance * this.speed * delta;
-    this.y += (dest.y - this.y) / distance * this.speed * delta;
+    this.x += (dest.x - this.x) / distance * movement;
+    this.y += (dest.y - this.y) / distance * movement;
     return false;
   }
 
