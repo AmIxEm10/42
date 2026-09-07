@@ -1,0 +1,22 @@
+{
+  "name": "hell-gate-td",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tower Defense web-natif : défendez la Porte des Enfers.",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "setup:env": "node scripts/setup-env.mjs"
+  },
+  "dependencies": { "phaser": "^3.90.0" },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "tailwindcss": "^4.1.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.0.0"
+  }
+}
