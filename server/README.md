@@ -23,7 +23,7 @@ npm run dev
 
 Vite et le relais écoutent sur la boucle locale. Le proxy de développement ajoute le jeton interne côté serveur ; il n'est pas injecté dans le JavaScript du jeu. `MEDIA_PORT` vaut 8787 par défaut. Redémarrer Vite et le relais après modification de `.env`.
 
-Le menu n'appelle pas encore ce service : les branchements vers les changements de niveau et l'interface Tarot seront ajoutés avec les prochaines étapes. Les clés manquantes déclenchent `NOT_CONFIGURED` sans requête sortante ; la méthode de repli permet à la future UI de conserver un visuel local.
+La scène Game appelle ce service à chaque changement de cercle ; TarotOverlay demande les illustrations de La Tour, du Diable et de La Mort lors du tirage. Les autres arcanes utilisent leurs cadres typographiques locaux. Les clés manquantes déclenchent `NOT_CONFIGURED` sans requête sortante ; la méthode de repli permet à la future UI de conserver un visuel local.
 
 ## Utilisation depuis une scène ou l'UI
 

@@ -9,7 +9,7 @@ export class GameControls {
   private readonly abort = new AbortController();
   constructor(actions: ControlActions) {
     this.element.className = 'game-ui';
-    this.element.innerHTML = `<header class="game-header"><strong class="font-serif text-2xl">HELLGATE<span class="text-orange-400">·</span>TD</strong><span id="circle-name"></span><button data-action="pause" class="small-button">Pause</button><button data-action="menu" class="small-button">Quitter</button></header>
+    this.element.innerHTML = `<header class="game-header"><strong class="font-serif text-2xl">HELLGATE<span class="text-orange-400">·</span>TD</strong><span id="circle-name"></span><button data-action="pause" id="pause-toggle" class="small-button">Pause</button><button data-action="menu" class="small-button">Quitter</button></header>
       <aside class="game-sidebar"><p class="eyebrow">Arsenal</p><h2 class="font-serif text-3xl">Défendre la Porte</h2>
       <button data-kind="ember" class="tower-button"><strong>Brasier</strong><span>100 cendres · tir direct</span></button>
       <button data-kind="frost" id="frost-build" class="tower-button" disabled><strong>Givre</strong><span>125 cendres · ralentissement</span></button>

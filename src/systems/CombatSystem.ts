@@ -4,6 +4,7 @@ import { Enemy } from '../entities/Enemy';
 import { Projectile } from '../entities/Projectile';
 import type { LevelConfig } from './WaveManager';
 import { center } from './Pathfinder';
+import { DamageTracker } from './DamageTracker';
 
 export class CombatSystem {
   readonly towers: Tower[] = [];
@@ -11,14 +12,11 @@ export class CombatSystem {
   multiplier = 1;
   execute = false;
   private effectsClock = 0;
-  private damageLog: { time: number; amount: number }[] = [];
-  private time = 0;
+  readonly damageTracker = new DamageTracker();
   constructor(private readonly scene: Phaser.Scene, private readonly onKill: (enemy: Enemy) => void) {}
-  get dps(): number { return this.damageLog.reduce((sum, hit) => sum + hit.amount, 0) / 3; }
+  get dps(): number { return this.damageTracker.dps; }
 
   update(delta: number, enemies: Enemy[], level: LevelConfig): void {
-    this.time += delta;
-    this.damageLog = this.damageLog.filter(hit => this.time - hit.time <= 3);
     this.effectsClock += delta;
     if (this.effectsClock >= 1) {
       this.effectsClock = 0;
@@ -29,8 +27,9 @@ export class CombatSystem {
         }
         if (level.id === 'envie' && this.towers.length) {
           const tower = this.towers.reduce((a, b) => Phaser.Math.Distance.Between(enemy.x, enemy.y, a.x, a.y) < Phaser.Math.Distance.Between(enemy.x, enemy.y, b.x, b.y) ? a : b);
-          enemy.attackDamage = Math.max(level.gateDamage, tower.damage / 4);
+          enemy.attackDamage = tower.damage;
           enemy.cloneRange = tower.range;
+          enemy.cloneInterval = tower.interval;
           enemy.speed = Math.min(95, 36 + 22 / tower.interval);
           const max = Math.max(level.hp, tower.damage * 5);
           enemy.hp = Math.min(max, enemy.hp * max / enemy.maxHp); enemy.maxHp = max; enemy.heal(0);
@@ -53,7 +52,7 @@ export class CombatSystem {
         const targets = shot.aoe ? enemies.filter(enemy => enemy.alive && Phaser.Math.Distance.Between(enemy.x, enemy.y, target.x, target.y) <= 70) : [target];
         for (const enemy of targets) {
           if (!enemy.alive) continue;
-          this.damageLog.push({ time: this.time, amount: enemy.damage(shot.damage, this.execute) });
+          this.damageTracker.record(enemy.damage(shot.damage, this.execute));
           if (shot.frost) enemy.slowTime = 1.5;
           if (enemy.hp <= 0) { enemy.alive = false; this.onKill(enemy); }
         }

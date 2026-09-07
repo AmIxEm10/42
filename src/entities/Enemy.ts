@@ -9,6 +9,8 @@ export class Enemy extends Phaser.GameObjects.Container {
   speed: number;
   attackDamage: number;
   cloneRange = 0;
+  cloneInterval = 1;
+  rangedCooldown = 0;
   private path: Cell[] = [];
   private pathVersion = -1;
   private target: Cell | undefined;

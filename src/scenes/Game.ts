@@ -18,6 +18,8 @@ import { TarotManager } from '../systems/TarotManager';
 import { TarotOverlay } from '../ui/TarotOverlay';
 import { HiggsfieldAPI } from '../services/HiggsfieldAPI';
 import { LevelBackground } from '../ui/LevelBackground';
+import { HUD } from '../ui/HUD';
+import { StatsDashboard } from '../ui/StatsDashboard';
 
 export class Game extends Phaser.Scene {
   grid!: Pathfinder;
@@ -42,6 +44,8 @@ export class Game extends Phaser.Scene {
   private tarot!: TarotManager;
   private tarotOverlay!: TarotOverlay;
   private background!: LevelBackground;
+  private hud!: HUD;
+  private stats!: StatsDashboard;
 
   constructor() { super(SceneKeys.Game); }
 
@@ -53,12 +57,14 @@ export class Game extends Phaser.Scene {
     this.bossClock = 0; this.uiClock = 0;
     document.querySelector('#app')!.classList.add('playing');
     this.controls = new GameControls({
-      launch: () => this.launch(), pause: () => { this.paused = !this.paused; this.message(this.paused ? 'Partie en pause.' : 'Partie reprise.'); },
+      launch: () => this.launch(), pause: () => { this.paused = !this.paused; this.message(this.paused ? 'Partie en pause.' : 'Partie reprise.'); this.refresh(); },
       menu: () => { this.scene.start(SceneKeys.MainMenu); }, build: kind => this.chooseBuild(kind),
       upgrade: () => this.upgrade(), collect: () => this.collectAll(),
     });
     this.board = new BoardRenderer(this, this.grid);
     this.gate = new Gate(this, this.grid.goal, MetaStore.shared.gateLevel * 20);
+    this.hud = new HUD(this.controls.element);
+    this.stats = new StatsDashboard(this.controls.element.querySelector('aside')!);
     const media = new HiggsfieldAPI();
     this.background = new LevelBackground(media); this.tarotOverlay = new TarotOverlay(media);
     this.tarot = new TarotManager(new TarotDeck(MetaStore.shared.arcane), {
@@ -139,9 +145,16 @@ export class Game extends Phaser.Scene {
   update(_time: number, deltaMs: number): void {
     if (this.ended || !this.controls || this.paused || this.drawing) return;
     const delta = Math.min(deltaMs / 1000, 0.05);
+    this.combat.damageTracker.advance(delta);
     if (this.waves.active) {
       this.spawner.update(delta, last => this.enemies.push(new Enemy(this, this.waves.level, this.grid, this.waves.hpMultiplier, last && this.waves.hasBoss)));
       for (const enemy of this.enemies) {
+        enemy.rangedCooldown -= delta;
+        if (enemy.alive && enemy.cloneRange > 0 && Phaser.Math.Distance.Between(enemy.x, enemy.y, this.gate.x, this.gate.y) <= enemy.cloneRange && enemy.rangedCooldown <= 0) {
+          this.gate.damage(enemy.attackDamage); enemy.rangedCooldown = enemy.cloneInterval;
+          const beam = this.add.line(0, 0, enemy.x, enemy.y, this.gate.x, this.gate.y, 0x6ed1b0, 0.7).setOrigin(0).setDepth(8);
+          this.tweens.add({ targets: beam, alpha: 0, duration: 180, onComplete: () => beam.destroy() });
+        }
         if (enemy.alive && enemy.step(delta)) { this.gate.damage(enemy.attackDamage); enemy.alive = false; enemy.destroy(); }
       }
       this.combat.update(delta, this.enemies, this.waves.level);
@@ -200,8 +213,11 @@ export class Game extends Phaser.Scene {
   }
 
   refresh(): void {
+    this.hud.update({ ashes: this.economy.ashes, souls: MetaStore.shared.souls, hp: this.gate.hp, maxHp: this.gate.maxHp, dps: this.combat.dps });
+    this.stats.update({ kills: this.economy.kills, collected: this.economy.collected, totalDamage: this.combat.damageTracker.total, remaining: this.enemies.filter(enemy => enemy.alive).length + this.spawner.remaining });
+    this.controls.text('pause-toggle', this.paused ? 'Reprendre' : 'Pause');
     this.controls.text('circle-name', `${this.waves.levelIndex + 1} / 7 · ${this.waves.level.name}`);
-    this.controls.text('wave-label', `Vague ${this.waves.wave} / ${this.waves.level.waves} · Porte ${Math.ceil(this.gate.hp)} / ${Math.ceil(this.gate.maxHp)} · ${Math.floor(this.economy.ashes)} cendres`);
+    this.controls.text('wave-label', `${this.drawing ? 'Tirage' : this.waves.active ? 'Expiation' : 'Préparation'} · Vague ${this.waves.wave} / ${this.waves.level.waves}`);
     this.controls.disabled('launch', this.waves.active || this.drawing || this.awaitingAoe || this.paused);
     this.controls.disabled('frost-build', !this.frostUnlocked);
     this.controls.disabled('upgrade', !this.selected || this.selected.level >= 5 || this.economy.ashes < this.selected.upgradeCost);
