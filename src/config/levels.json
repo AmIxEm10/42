@@ -1,0 +1,118 @@
+[
+  {
+    "id": "gourmandise",
+    "name": "Gourmandise",
+    "description": "Des âmes massives, lentes et résistantes.",
+    "hp": 260,
+    "speed": 35,
+    "radius": 20,
+    "color": "#d39452",
+    "waves": 3,
+    "count": 6,
+    "spawnInterval": 1.05,
+    "reward": 16,
+    "gateDamage": 8,
+    "slowZones": []
+  },
+  {
+    "id": "colere",
+    "name": "Colère",
+    "description": "Chaque blessure accélère les damnés ; leur mort étourdit les tours.",
+    "hp": 140,
+    "speed": 48,
+    "radius": 14,
+    "color": "#e65343",
+    "waves": 3,
+    "count": 7,
+    "spawnInterval": 1.05,
+    "reward": 18,
+    "gateDamage": 9,
+    "slowZones": []
+  },
+  {
+    "id": "avarice",
+    "name": "Avarice",
+    "description": "Ramassez les cendres en moins de trois secondes.",
+    "hp": 170,
+    "speed": 52,
+    "radius": 13,
+    "color": "#e2be55",
+    "waves": 3,
+    "count": 8,
+    "spawnInterval": 1.05,
+    "reward": 20,
+    "gateDamage": 10,
+    "slowZones": []
+  },
+  {
+    "id": "paresse",
+    "name": "Paresse",
+    "description": "Les brumes violettes divisent la cadence des tours par deux.",
+    "hp": 190,
+    "speed": 42,
+    "radius": 15,
+    "color": "#9e83cf",
+    "waves": 3,
+    "count": 9,
+    "spawnInterval": 1.05,
+    "reward": 22,
+    "gateDamage": 11,
+    "slowZones": [
+      {
+        "col": 6,
+        "row": 7,
+        "radius": 130
+      },
+      {
+        "col": 12,
+        "row": 2,
+        "radius": 120
+      }
+    ]
+  },
+  {
+    "id": "luxure",
+    "name": "Luxure",
+    "description": "Les ennemis proches se soignent mutuellement.",
+    "hp": 170,
+    "speed": 48,
+    "radius": 14,
+    "color": "#e4779c",
+    "waves": 3,
+    "count": 10,
+    "spawnInterval": 1.05,
+    "reward": 24,
+    "gateDamage": 12,
+    "slowZones": []
+  },
+  {
+    "id": "envie",
+    "name": "Envie",
+    "description": "Les âmes copient les caractéristiques de la tour la plus proche.",
+    "hp": 180,
+    "speed": 45,
+    "radius": 14,
+    "color": "#6ed1b0",
+    "waves": 3,
+    "count": 11,
+    "spawnInterval": 1.05,
+    "reward": 26,
+    "gateDamage": 13,
+    "slowZones": []
+  },
+  {
+    "id": "orgueil",
+    "name": "Orgueil",
+    "description": "Le souverain déplace les obstacles pendant le combat.",
+    "hp": 240,
+    "speed": 43,
+    "radius": 16,
+    "color": "#bbbacf",
+    "waves": 3,
+    "count": 12,
+    "spawnInterval": 1.05,
+    "reward": 28,
+    "gateDamage": 14,
+    "slowZones": []
+  }
+]
